@@ -1,24 +1,18 @@
-## test
 import discord
 from discord.ext import commands
+import asyncio
 import os
+
 from commands import kurupo, rate_update, monthly_news
 
-intents = discord.Intents.default()
-intents.message_content = True
-intents.guilds = True
-intents.members = True
-intents.voice_states = True
-
+intents = discord.Intents.all()
 bot = commands.Bot(command_prefix="/", intents=intents)
 
-# Load commands
-bot.add_cog(kurupo.Kurupo(bot))
-bot.add_cog(rate_update.RateUpdate(bot))
-bot.add_cog(monthly_news.MonthlyNews(bot))
+async def main():
+    await bot.add_cog(kurupo.Kurupo(bot))
+    await bot.add_cog(rate_update.RateUpdate(bot))
+    await bot.add_cog(monthly_news.MonthlyNews(bot))
+    await bot.start(os.getenv("DISCORD_TOKEN"))
 
-@bot.event
-async def on_ready():
-    print(f"Bot is ready. Logged in as {bot.user}")
-
-bot.run(os.getenv("DISCORD_TOKEN"))
+if __name__ == "__main__":
+    asyncio.run(main())
