@@ -1,27 +1,23 @@
 import discord
-from discord.ext import commands
-import asyncio
 import os
+import asyncio
 
-from commands import kurupo, rate_update, monthly_news
+TOKEN = os.getenv("DISCORD_TOKEN")
 
-intents = discord.Intents.all()
-bot = commands.Bot(command_prefix="/", intents=intents)
+intents = discord.Intents.default()
+client = discord.Client(intents=intents)
 
-async def setup():
-    await bot.add_cog(kurupo.Kurupo(bot))
-    await bot.add_cog(rate_update.RateUpdate(bot))
-    await bot.add_cog(monthly_news.MonthlyNews(bot))
+@client.event
+async def on_ready():
+    print(f'✅ Bot is logged in as {client.user}')
 
-async def main():
-    await setup()
-    token = os.getenv("DISCORD_TOKEN")
-    if not token:
-        raise ValueError("DISCORD_TOKEN が環境変数に設定されていません。")
-    await bot.start(token)
+async def run_bot():
+    try:
+        await client.start(TOKEN)
+    except Exception as e:
+        print(f"⚠️ Bot crashed with error: {e}")
+        await asyncio.sleep(60)  # 1分待って再起動（連続クラッシュ防止）
+        await run_bot()
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except Exception as e:
-        print(f"Botの起動中にエラーが発生しました: {e}")
+    asyncio.run(run_bot())
