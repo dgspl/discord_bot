@@ -1,23 +1,28 @@
 import discord
+from discord.ext import commands, tasks
 import os
 import asyncio
 
-TOKEN = os.getenv("DISCORD_TOKEN")
+from commands import kurupo, rate_update, monthly_news
 
-intents = discord.Intents.default()
-client = discord.Client(intents=intents)
+intents = discord.Intents.all()
+bot = commands.Bot(command_prefix="/", intents=intents)
 
-@client.event
+# 15分ごとにログを出力するタスク
+@tasks.loop(minutes=15)
+async def keep_alive_log():
+    print("✅ Bot is alive and running...")
+
+@bot.event
 async def on_ready():
-    print(f'✅ Bot is logged in as {client.user}')
+    print(f"✅ Logged in as {bot.user}")
+    keep_alive_log.start()
 
-async def run_bot():
-    try:
-        await client.start(TOKEN)
-    except Exception as e:
-        print(f"⚠️ Bot crashed with error: {e}")
-        await asyncio.sleep(60)  # 1分待って再起動（連続クラッシュ防止）
-        await run_bot()
+async def main():
+    await bot.add_cog(kurupo.Kurupo(bot))
+    await bot.add_cog(rate_update.RateUpdate(bot))
+    await bot.add_cog(monthly_news.MonthlyNews(bot))
+    await bot.start(os.getenv("DISCORD_TOKEN"))
 
 if __name__ == "__main__":
-    asyncio.run(run_bot())
+    asyncio.run(main())
