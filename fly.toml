@@ -4,8 +4,8 @@ app = "discord-bot-summer-sun-7175"
 primary_region = "sjc"
 
 [build]
-  # Buildpacksは使わない。Dockerfile を使うためコメントアウトまたは削除してもよい。
-  # builder = "paketobuildpacks/builder:base"
+  dockerfile = "Dockerfile"
+
 
 [env]
   # Discord BotはHTTPサーバーでないのでPORT不要。ただし入っていても害はありません。
