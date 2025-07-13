@@ -3,11 +3,6 @@ from discord.ext import commands, tasks
 import os
 import asyncio
 
-# ローカル用に .env を読み込み
-if not os.getenv("RENDER"):
-    from dotenv import load_dotenv
-    load_dotenv()
-
 from commands import kurupo, rate_update, monthly_news
 
 intents = discord.Intents.all()
@@ -26,10 +21,11 @@ async def main():
     await bot.add_cog(kurupo.Kurupo(bot))
     await bot.add_cog(rate_update.RateUpdate(bot))
     await bot.add_cog(monthly_news.MonthlyNews(bot))
-
-    token = os.getenv("DISCORD_TOKEN")
-    if token is None:
-        raise RuntimeError("❌ DISCORD_TOKEN が設定されていません")
+    
+    token = os.environ.get("DISCORD_TOKEN")  # .envを読み込まないのでRender用
+    if not token:
+        raise ValueError("DISCORD_TOKEN is not set.")
+    
     await bot.start(token)
 
 if __name__ == "__main__":
