@@ -1,9 +1,10 @@
 from discord.ext import commands
+from discord import app_commands, Interaction
 
-class RateUpdate(commands.Cog):
+class MonthlyNews(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="rate_update")
-    async def rate_update(self, ctx):
-        await ctx.send("/rate_update コマンドは実装予定です。")
+    @app_commands.command(name="monthly_news", description="月次ニュースを表示します")
+    async def monthly_news(self, interaction: Interaction):
+        await interaction.response.send_message("月次ニュースは現在準備中です。")
