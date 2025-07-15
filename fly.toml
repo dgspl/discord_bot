@@ -1,24 +1,19 @@
-# fly.toml file for a Discord Bot using Dockerfile
-
 app = "discord-bot-summer-sun-7175"
 primary_region = "sjc"
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = "Dockerfile"  # Dockerfileを使ったビルド
 
-
-[env]
-  # Discord BotはHTTPサーバーでないのでPORT不要。ただし入っていても害はありません。
-  # PORT = "8080"
+[http_service]
+  auto_stop_machines = "stop"       # ✅ 未使用時は自動停止
+  auto_start_machines = true        # ✅ リクエストが来たら自動起動
+  min_machines_running = 0          # ✅ 常時起動しない（無料枠節約）
+  internal_port = 8080              # PORTがあるなら指定（Flask用など）
 
 [[vm]]
-  memory = "1gb"
+  memory = "256mb"                  # ✅ 最小メモリ（無料枠最大活用）
   cpu_kind = "shared"
   cpus = 1
 
-# Discord Bot は HTTP アクセスを受けないので [http_service] セクションも削除
-# もし今後 Flask 等を使う場合は復活させる
-
-# Machines設定（optional。自動起動停止する設定を維持）
-[experimental]
-  auto_rollback = true
+[env]
+  PORT = "8080"                     # Flaskなど使ってる場合は必要
